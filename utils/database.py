@@ -49,3 +49,21 @@ def load_config():
 def get_db_connection():
     """Fungsi dummy jika ada modul lain yang memanggilnya"""
     return None
+def delete_data(jenis, index):
+    """Menghapus data dari Google Sheets berdasarkan index"""
+    try:
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df = load_data(jenis)
+        if not df.empty:
+            df = df.drop(df.index[index])
+            conn.update(worksheet=jenis, data=df)
+            st.toast(f"🗑️ Data {jenis} berhasil dihapus!")
+    except Exception as e:
+        st.error(f"Gagal menghapus data: {e}")
+
+def load_config():
+    """Fungsi pembantu agar main.py lama tidak error"""
+    return {
+        "admin_password": "admin", 
+        "app_name": "Applay KUA Tangerang"
+    }
