@@ -67,3 +67,7 @@ def load_config():
         "admin_password": "admin", 
         "app_name": "Applay KUA Tangerang"
     }
+
+def simpan_ke_google_sheets(df, jenis):
+    """Fungsi pembantu agar modul buku_tamu tidak error"""
+    return save_data(jenis, df)
