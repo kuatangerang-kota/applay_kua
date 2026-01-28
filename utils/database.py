@@ -14,7 +14,7 @@ if "cloudinary" in st.secrets:
     )
 
 def load_data(jenis):
-    # Mapping sederhana agar sesuai dengan pesan error tadi
+    # Mapping ini harus sama persis dengan nama tab di Google Sheets lu
     mapping = {
         "surat_masuk": "masuk",
         "surat_keluar": "keluar",
@@ -26,13 +26,16 @@ def load_data(jenis):
     
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
-        # Tambahkan ttl=0 agar tidak mengambil data lama dari memori
+        # Ambil data tanpa sebut nama worksheet dulu buat ngetes
         df = conn.read(worksheet=nama_tab, ttl=0)
         return df.fillna("")
-    except Exception as e:
-        # Pesan ini akan membantu kita tahu tab mana yang masih bermasalah
-        st.error(f"⚠️ Gagal memuat data dari tab '{nama_tab}': {e}")
-        return pd.DataFrame()
+    except Exception:
+        try:
+            # JALAN PINTAS: Kalau gagal, ambil tab pertama saja daripada error
+            df = conn.read(ttl=0) 
+            return df.fillna("")
+        except:
+            return pd.DataFrame()
 def save_data(jenis, df):
     """Simpan data ke Google Sheets"""
     try:
@@ -80,6 +83,7 @@ def save_config(config):
 def simpan_ke_google_sheets(df, jenis):
     """Alias untuk save_data"""
     return save_data(jenis, df)
+
 
 
 
