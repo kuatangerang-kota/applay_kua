@@ -14,25 +14,30 @@ if "cloudinary" in st.secrets:
     )
 
 def load_data(jenis):
-    # Paksa mapping nama agar sesuai dengan yang lu mau di Sheets
+    # Mapping agar nama menu di modul ketemu dengan nama tab asli di Sheets kamu
     mapping = {
         "surat_masuk": "masuk",
         "surat_keluar": "keluar",
         "buku_tamu": "tamu",
-        "stok_opname": "stok"
+        "stok_opname": "stok_opname",
+        "akta_nikah": "akta_nik_baru",
+        "duplikat_nikah": "duplikat_nikah",
+        "rumah_ibadah": "rumah_ibadah",
+        "wakaf": "wakaf",
+        "bp4": "bp4"
     }
     
-    # Kalau nama 'jenis' ada di mapping, ganti jadi nama barunya
     nama_tab = mapping.get(jenis, jenis)
     
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
+        # Paksa ttl=0 agar tidak mengambil data lama dari cache
         df = conn.read(worksheet=nama_tab, ttl=0)
         return df.fillna("")
     except Exception as e:
-        st.error(f"Error baca tab {nama_tab}: {e}")
+        # Menampilkan pesan error yang lebih jelas jika gagal
+        st.error(f"⚠️ Gagal memuat data dari tab '{nama_tab}': {e}")
         return pd.DataFrame()
-
 def save_data(jenis, df):
     """Simpan data ke Google Sheets"""
     try:
@@ -80,6 +85,7 @@ def save_config(config):
 def simpan_ke_google_sheets(df, jenis):
     """Alias untuk save_data"""
     return save_data(jenis, df)
+
 
 
 
