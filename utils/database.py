@@ -54,10 +54,11 @@ def save_uploaded_file(uploaded_file, category="umum"):
 # --- FUNGSI TAMBAHAN AGAR TIDAK ERROR (DUMMY) ---
 
 def load_config():
-    """Mengambil konfigurasi dasar agar main.py baris 52 jalan"""
+    """Mengambil konfigurasi agar main.py baris 130 tidak error"""
     return {
         "admin_password": "admin", 
-        "app_name": "Applay KUA Tangerang"
+        "app_name": "Applay KUA Tangerang",
+        "nama_kantor": "KANTOR URUSAN AGAMA KECAMATAN TANGERANG"
     }
 
 def save_config(config):
@@ -67,3 +68,4 @@ def save_config(config):
 def simpan_ke_google_sheets(df, jenis):
     """Alias untuk save_data"""
     return save_data(jenis, df)
+
