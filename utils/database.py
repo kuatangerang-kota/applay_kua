@@ -14,19 +14,23 @@ if "cloudinary" in st.secrets:
     )
 
 def load_data(jenis):
-    """Ambil data dari Google Sheets"""
+    # Paksa mapping nama agar sesuai dengan yang lu mau di Sheets
+    mapping = {
+        "surat_masuk": "masuk",
+        "surat_keluar": "keluar",
+        "buku_tamu": "tamu",
+        "stok_opname": "stok"
+    }
+    
+    # Kalau nama 'jenis' ada di mapping, ganti jadi nama barunya
+    nama_tab = mapping.get(jenis, jenis)
+    
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
-        # Tambahin ttl=0 biar dia gak pake data lama (cache)
-        df = conn.read(worksheet=jenis, ttl=0)
-        
-        # DEBUG: Hapus ini kalau data sudah muncul
-        if df.empty:
-            st.sidebar.warning(f"Tab {jenis} kebaca KOSONG")
-        
+        df = conn.read(worksheet=nama_tab, ttl=0)
         return df.fillna("")
     except Exception as e:
-        st.error(f"Error baca tab {jenis}: {e}")
+        st.error(f"Error baca tab {nama_tab}: {e}")
         return pd.DataFrame()
 
 def save_data(jenis, df):
@@ -76,6 +80,7 @@ def save_config(config):
 def simpan_ke_google_sheets(df, jenis):
     """Alias untuk save_data"""
     return save_data(jenis, df)
+
 
 
 
