@@ -15,7 +15,7 @@ st.set_page_config(
 import os
 import base64
 import time
-from utils.database import load_config
+#from utils.database import load_config
 from modules import (
     dashboard, surat_masuk, surat_keluar,
     bp4, wakaf, buku_tamu,
@@ -201,4 +201,5 @@ else:
     elif menu == "📦 Stok Opname": 
         stok_opname.render()
     elif menu == "⚙️ Control Settings": 
+
         settings.render()
