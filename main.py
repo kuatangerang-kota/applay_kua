@@ -8,7 +8,35 @@ st.set_page_config(
     layout="wide",
     page_icon="🏛️"
 )
-
+st.markdown("""
+    <style>
+        /* Paksa Sidebar jadi Gelap */
+        [data-testid="stSidebar"] {
+            background-color: #001a1a !important;
+        }
+        [data-testid="stSidebar"] * {
+            color: #00FF00 !important;
+        }
+        
+        /* Paksa Header atas jadi Gelap */
+        [data-testid="stHeader"] {
+            background-color: #001a1a !important;
+            color: white !important;
+        }
+        
+        /* Bikin tombol di sidebar jadi ijo neon */
+        section[data-testid="stSidebar"] .stButton button {
+            background-color: #003333 !important;
+            color: #00FF00 !important;
+            border: 1px solid #00FF00 !important;
+        }
+        
+        /* Menghilangkan blok putih di judul atas */
+        .stApp {
+            background-color: #001a1a;
+        }
+    </style>
+""", unsafe_allow_html=True)
 # ==========================================
 # 1. IMPORT LAIN (SETELAH PAGE CONFIG)
 # ==========================================
@@ -203,4 +231,5 @@ else:
     elif menu == "⚙️ Control Settings": 
 
         settings.render()
+
 
