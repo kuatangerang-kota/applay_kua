@@ -37,4 +37,15 @@ def save_uploaded_file(uploaded_file, category="umum"):
         except Exception as e:
             st.error(f"Gagal upload ke Cloudinary: {e}")
             return ""
+
     return ""
+def load_config():
+    """Fungsi pembantu agar main.py lama tidak error saat mencari config"""
+    return {
+        "admin_password": "admin", # Sesuaikan dengan password lama kamu
+        "app_name": "Applay KUA Tangerang"
+    }
+
+def get_db_connection():
+    """Fungsi dummy jika ada modul lain yang memanggilnya"""
+    return None
