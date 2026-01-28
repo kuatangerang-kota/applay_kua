@@ -14,28 +14,31 @@ if "cloudinary" in st.secrets:
     )
 
 def load_data(jenis):
-    # Mapping ini harus sama persis dengan nama tab di Google Sheets lu
+    # Mapping ini harus SAMA PERSIS dengan nama tab di bawah Google Sheets lu
     mapping = {
         "surat_masuk": "masuk",
         "surat_keluar": "keluar",
         "buku_tamu": "tamu",
         "stok_opname": "stok",
-        "akta_nikah": "akta_nik_baru"
+        "akta_nikah": "akta_nik_baru",
+        "duplikat_nikah": "duplikat_nikah",
+        "rumah_ibadah": "rumah_ibadah",
+        "wakaf": "wakaf",
+        "bp4": "bp4"
     }
+    
     nama_tab = mapping.get(jenis, jenis)
     
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
-        # Ambil data tanpa sebut nama worksheet dulu buat ngetes
+        # Kita hapus "Jalan Pintas" tadi, biar dia fokus nyari nama_tab
         df = conn.read(worksheet=nama_tab, ttl=0)
         return df.fillna("")
-    except Exception:
-        try:
-            # JALAN PINTAS: Kalau gagal, ambil tab pertama saja daripada error
-            df = conn.read(ttl=0) 
-            return df.fillna("")
-        except:
-            return pd.DataFrame()
+    except Exception as e:
+        # Biar kita tau tab mana yang sebenernya bikin masalah
+        st.error(f"❌ Python gak nemu tab bernama: '{nama_tab}'. Cek lagi nama tab di Google Sheets lu!")
+        return pd.DataFrame()
+        
 def save_data(jenis, df):
     """Simpan data ke Google Sheets"""
     try:
@@ -83,6 +86,7 @@ def save_config(config):
 def simpan_ke_google_sheets(df, jenis):
     """Alias untuk save_data"""
     return save_data(jenis, df)
+
 
 
 
