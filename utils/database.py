@@ -4,13 +4,14 @@ from streamlit_gsheets import GSheetsConnection
 import cloudinary
 import cloudinary.uploader
 
-# Konek ke Cloudinary pake data dari Secrets
-cloudinary.config(
-    cloud_name = st.secrets["cloudinary"]["cloud_name"],
-    api_key = st.secrets["cloudinary"]["api_key"],
-    api_secret = st.secrets["cloudinary"]["api_secret"],
-    secure = True
-)
+# 1. Konfigurasi Cloudinary
+if "cloudinary" in st.secrets:
+    cloudinary.config(
+        cloud_name = st.secrets["cloudinary"]["cloud_name"],
+        api_key = st.secrets["cloudinary"]["api_key"],
+        api_secret = st.secrets["cloudinary"]["api_secret"],
+        secure = True
+    )
 
 def load_data(jenis):
     """Ambil data dari Google Sheets"""
@@ -18,68 +19,51 @@ def load_data(jenis):
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet=jenis, ttl="0")
         return df.fillna("")
-    except:
+    except Exception as e:
         return pd.DataFrame()
 
 def save_data(jenis, df):
     """Simpan data ke Google Sheets"""
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    conn.update(worksheet=jenis, data=df)
-
-def save_uploaded_file(uploaded_file, category="umum"):
-    """Upload file ke Cloudinary & dapet link URL otomatis"""
-    if uploaded_file:
-        try:
-            # File langsung terbang ke awan Cloudinary
-            res = cloudinary.uploader.upload(uploaded_file, folder=f"applay_kua/{category}")
-            # Link inilah yang bakal masuk ke tabel Google Sheets lu
-            return res['secure_url']
-        except Exception as e:
-            st.error(f"Gagal upload ke Cloudinary: {e}")
-            return ""
-
-    return ""
-def load_config():
-    """Fungsi pembantu agar main.py lama tidak error saat mencari config"""
-    return {
-        "admin_password": "admin", # Sesuaikan dengan password lama kamu
-        "app_name": "Applay KUA Tangerang"
-    }
-
-def get_db_connection():
-    """Fungsi dummy jika ada modul lain yang memanggilnya"""
-    return None
-def delete_data(jenis, index):
-    """Menghapus data dari Google Sheets berdasarkan index"""
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
+        conn.update(worksheet=jenis, data=df)
+        st.toast(f"✅ Data {jenis} Berhasil di-Backup!")
+    except Exception as e:
+        st.error(f"Gagal Sinkronisasi: {e}")
+
+def delete_data(jenis, index):
+    """Hapus data dari Google Sheets"""
+    try:
         df = load_data(jenis)
         if not df.empty:
             df = df.drop(df.index[index])
-            conn.update(worksheet=jenis, data=df)
-            st.toast(f"🗑️ Data {jenis} berhasil dihapus!")
+            save_data(jenis, df)
     except Exception as e:
-        st.error(f"Gagal menghapus data: {e}")
+        st.error(f"Gagal hapus: {e}")
+
+def save_uploaded_file(uploaded_file, category="umum"):
+    """Upload file ke Cloudinary"""
+    if uploaded_file:
+        try:
+            res = cloudinary.uploader.upload(uploaded_file, folder=f"applay_kua/{category}")
+            return res['secure_url']
+        except:
+            return ""
+    return ""
+
+# --- FUNGSI TAMBAHAN AGAR TIDAK ERROR (DUMMY) ---
 
 def load_config():
-    """Fungsi pembantu agar main.py lama tidak error"""
+    """Mengambil konfigurasi dasar agar main.py baris 52 jalan"""
     return {
         "admin_password": "admin", 
         "app_name": "Applay KUA Tangerang"
     }
-
-def simpan_ke_google_sheets(df, jenis):
-    """Fungsi pembantu agar modul buku_tamu tidak error"""
-    return save_data(jenis, df)
 
 def save_config(config):
-    """Fungsi dummy agar modul settings tidak error saat mencoba simpan konfigurasi"""
-    st.info("Konfigurasi di versi Cloud dikelola melalui menu Secrets di Streamlit Cloud.")
+    """Agar modul settings tidak error"""
     return True
 
-def load_config():
-    """Mengambil konfigurasi dasar agar main.py tidak error"""
-    return {
-        "admin_password": "admin", 
-        "app_name": "Applay KUA Tangerang"
-    }
+def simpan_ke_google_sheets(df, jenis):
+    """Alias untuk save_data"""
+    return save_data(jenis, df)
