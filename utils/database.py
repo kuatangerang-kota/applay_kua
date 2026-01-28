@@ -71,3 +71,15 @@ def load_config():
 def simpan_ke_google_sheets(df, jenis):
     """Fungsi pembantu agar modul buku_tamu tidak error"""
     return save_data(jenis, df)
+
+def save_config(config):
+    """Fungsi dummy agar modul settings tidak error saat mencoba simpan konfigurasi"""
+    st.info("Konfigurasi di versi Cloud dikelola melalui menu Secrets di Streamlit Cloud.")
+    return True
+
+def load_config():
+    """Mengambil konfigurasi dasar agar main.py tidak error"""
+    return {
+        "admin_password": "admin", 
+        "app_name": "Applay KUA Tangerang"
+    }
