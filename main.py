@@ -10,30 +10,41 @@ st.set_page_config(
 )
 st.markdown("""
     <style>
-        /* Paksa Sidebar jadi Gelap */
+        /* TARUH DI DALAM <style> DI main.py */
+        [data-testid="stAppViewContainer"] {
+            background: #001a1a !important; /* Hijau Gelap Khas KUA */
+        }
+        
         [data-testid="stSidebar"] {
-            background-color: #001a1a !important;
-        }
-        [data-testid="stSidebar"] * {
-            color: #00FF00 !important;
+            background-color: #000d0d !important;
+            border-right: 1px solid #00ff96 !important;
         }
         
-        /* Paksa Header atas jadi Gelap */
-        [data-testid="stHeader"] {
-            background-color: #001a1a !important;
-            color: white !important;
+        /* Tulisan Menu & Angka Dashboard */
+        .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown p {
+            color: #00ff96 !important;
+            text-shadow: 0 0 10px rgba(0,255,150,0.5);
         }
         
-        /* Bikin tombol di sidebar jadi ijo neon */
-        section[data-testid="stSidebar"] .stButton button {
+        /* Tombol-tombol biar gak putih */
+        button, .stButton>button {
             background-color: #003333 !important;
-            color: #00FF00 !important;
-            border: 1px solid #00FF00 !important;
+            color: #00ff96 !important;
+            border: 1px solid #00ff96 !important;
+            border-radius: 8px !important;
+            font-weight: bold !important;
         }
         
-        /* Menghilangkan blok putih di judul atas */
-        .stApp {
-            background-color: #001a1a;
+        button:hover {
+            background-color: #00ff96 !important;
+            color: #001a1a !important;
+        }
+        
+        /* Input text biar keliatan pas login */
+        .stTextInput>div>div>input {
+            background-color: #002626 !important;
+            color: #00ff96 !important;
+            border: 1px solid #00ff96 !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -231,5 +242,6 @@ else:
     elif menu == "⚙️ Control Settings": 
 
         settings.render()
+
 
 
